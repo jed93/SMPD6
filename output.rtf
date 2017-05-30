@@ -1,0 +1,440 @@
+{\rtf1\ansi\ansicpg1250\cocoartf1504\cocoasubrtf830
+{\fonttbl\f0\fswiss\fcharset0 LucidaConsole;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red0\green0\blue0;\red255\green255\blue255;
+\red182\green0\blue12;\red109\green109\blue109;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c100000;\cssrgb\c0\c0\c0;\cssrgb\c100000\c100000\c100000;
+\cssrgb\c77255\c2353\c4314;\cssrgb\c50196\c50196\c50196;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil \trpadl120 \tapadb160 
+\clvertalt \clshdrawnil \clwWidth14140\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+
+\f0\fs26\fsmilli13333 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 > library("neuralnet")\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf5 \strokec5 Warning message:\
+pakiet \'e2\'80\'98neuralnet\'e2\'80\'99 zosta\'c5\'82 zbudowany w wersji R 3.4.0 \
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf2 \strokec2 > \
+> #Going to create a neural network to perform prediction\
+> #Type ?neuralnet for more information on the neuralnet library\
+> \
+> #Generate training data\
+> #And store them as a dataframe\
+> traininginput <- as.data.frame(matrix(c(30, 4.8, 18,\
++                                         29, 4.1, 17,\
++                                         24, 3.9, 17,\
++                                         27, 4.4, 14,\
++                                         26, 5.5, 16,\
++                                         22, 3.9, 14,\
++                                         37, 7.1, 17,\
++                                         22, 3.7, 17,\
++                                         42, 19.8, 14,\
++                                         10, 11.5, 20,\
++                                         7, 2.4, 20,\
++                                         41, 7.52, 18,\
++                                         21, 2.83, 18,\
++                                         20, 4.1, 20,\
++                                         30, 4.7, 18,\
++                                         32, 2.9, 15,\
++                                         24, 5, 15,\
++                                         20, 4.3, 20,\
++                                         4, 2.3, 19,\
++                                         32, 2.9, 15), nrow=20, ncol=3))\
+> trainingoutput <- c(269, 379, 349, 299, 299, 160, 499, 259, 2699, 419, 269, 489, 189, 369, 319, 399, 200, 269, 159, 419)\
+> \
+> #Column bind the data into one variable\
+> trainingdata <- cbind(traininginput, trainingoutput)\
+> \
+> # Create Vector of Column Max and Min Values\
+> maxs <- apply(trainingdata[,], 2, max)\
+> mins <- apply(trainingdata[,], 2, min)\
+> \
+> # Use scale() and convert the resulting matrix to a data frame\
+> scaled.trainingdata <- as.data.frame(scale(trainingdata[,], center=mins, scale=maxs-mins))\
+> trainingdata <- scaled.trainingdata\
+> \
+> # Check out results\
+> print(head(trainingdata, 10))\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf3 \strokec3             V1         V2         V3 trainingoutput\
+1  0.788519637 0.36868687 0.06060606   0.0433070866\
+2  0.027190332 0.49494949 0.59595960   0.0866141732\
+3  0.425981873 0.03282828 0.93265993   0.0748031496\
+4  0.758308157 0.36868687 0.08080808   0.0551181102\
+5  0.006042296 1.00000000 0.52861953   0.0551181102\
+6  0.395770393 0.43939394 1.00000000   0.0003937008\
+7  0.607250755 0.29292929 0.02020202   0.1338582677\
+8  0.000000000 0.19191919 0.42760943   0.0393700787\
+9  0.395770393 0.22979798 0.73063973   1.0000000000\
+10 0.697885196 0.44444444 0.09090909   0.1023622047\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf2 \strokec2 > \
+> colnames(trainingdata) <- c("Pojemnosc", "Waga_w_kg", "Utrzymywanie_temperatury_do_st_c", "Cena") \
+> print(trainingdata)\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf3 \strokec3      Pojemnosc  Waga_w_kg Utrzymywanie_temperatury_do_st_c         Cena\
+1  0.788519637 0.36868687                       0.06060606 0.0433070866\
+2  0.027190332 0.49494949                       0.59595960 0.0866141732\
+3  0.425981873 0.03282828                       0.93265993 0.0748031496\
+4  0.758308157 0.36868687                       0.08080808 0.0551181102\
+5  0.006042296 1.00000000                       0.52861953 0.0551181102\
+6  0.395770393 0.43939394                       1.00000000 0.0003937008\
+7  0.607250755 0.29292929                       0.02020202 0.1338582677\
+8  0.000000000 0.19191919                       0.42760943 0.0393700787\
+9  0.395770393 0.22979798                       0.73063973 1.0000000000\
+10 0.697885196 0.44444444                       0.09090909 0.1023622047\
+11 0.015105740 0.11616162                       0.42760943 0.0433070866\
+12 0.305135952 0.00000000                       0.59595960 0.1299212598\
+13 0.667673716 0.44444444                       0.06734007 0.0118110236\
+14 0.048338369 0.97474747                       0.59595960 0.0826771654\
+15 0.365558912 0.12929293                       0.05723906 0.0629921260\
+16 0.546827795 0.39393939                       0.00000000 0.0944881890\
+17 0.000000000 0.46969697                       0.56228956 0.0161417323\
+18 0.305135952 0.01085859                       1.00000000 0.0433070866\
+19 1.000000000 0.39393939                       0.02020202 0.0000000000\
+20 0.096676737 0.44444444                       0.42760943 0.1023622047\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf2 \strokec2 > \
+> #Train the neural network\
+> #Going to have C(5, 4, 3) hidden layers\
+> #Threshold is a numeric value specifying the threshold for the partial\
+> #derivatives of the error function as stopping criteria.\
+> net.price <- neuralnet(Cena~Pojemnosc+Waga_w_kg+Utrzymywanie_temperatury_do_st_c, trainingdata, hidden=c(5, 4, 3), threshold=0.001)\
+> print(net.price)\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf3 \strokec3 $call\
+neuralnet(formula = Cena ~ Pojemnosc + Waga_w_kg + Utrzymywanie_temperatury_do_st_c, \
+    data = trainingdata, hidden = c(5, 4, 3), threshold = 0.001)\
+\
+$response\
+              Cena\
+1  0.0433070866142\
+2  0.0866141732283\
+3  0.0748031496063\
+4  0.0551181102362\
+5  0.0551181102362\
+6  0.0003937007874\
+7  0.1338582677165\
+8  0.0393700787402\
+9  1.0000000000000\
+10 0.1023622047244\
+11 0.0433070866142\
+12 0.1299212598425\
+13 0.0118110236220\
+14 0.0826771653543\
+15 0.0629921259843\
+16 0.0944881889764\
+17 0.0161417322835\
+18 0.0433070866142\
+19 0.0000000000000\
+20 0.1023622047244\
+\
+$covariate\
+                [,1]          [,2]          [,3]\
+ [1,] 0.788519637462 0.36868686869 0.06060606061\
+ [2,] 0.027190332326 0.49494949495 0.59595959596\
+ [3,] 0.425981873112 0.03282828283 0.93265993266\
+ [4,] 0.758308157100 0.36868686869 0.08080808081\
+ [5,] 0.006042296073 1.00000000000 0.52861952862\
+ [6,] 0.395770392749 0.43939393939 1.00000000000\
+ [7,] 0.607250755287 0.29292929293 0.02020202020\
+ [8,] 0.000000000000 0.19191919192 0.42760942761\
+ [9,] 0.395770392749 0.22979797980 0.73063973064\
+[10,] 0.697885196375 0.44444444444 0.09090909091\
+[11,] 0.015105740181 0.11616161616 0.42760942761\
+[12,] 0.305135951662 0.00000000000 0.59595959596\
+[13,] 0.667673716012 0.44444444444 0.06734006734\
+[14,] 0.048338368580 0.97474747475 0.59595959596\
+[15,] 0.365558912387 0.12929292929 0.05723905724\
+[16,] 0.546827794562 0.39393939394 0.00000000000\
+[17,] 0.000000000000 0.46969696970 0.56228956229\
+[18,] 0.305135951662 0.01085858586 1.00000000000\
+[19,] 1.000000000000 0.39393939394 0.02020202020\
+[20,] 0.096676737160 0.44444444444 0.42760942761\
+\
+$model.list\
+$model.list$response\
+[1] "Cena"\
+\
+$model.list$variables\
+[1] "Pojemnosc"                        "Waga_w_kg"                       \
+[3] "Utrzymywanie_temperatury_do_st_c"\
+\
+\
+$err.fct\
+function (x, y) \
+\{\
+    1/2 * (y - x)^2\
+\}\
+<environment: 0x00000000099877b0>\
+attr(,"type")\
+[1] "sse"\
+\
+$act.fct\
+function (x) \
+\{\
+    1/(1 + exp(-x))\
+\}\
+<environment: 0x00000000099877b0>\
+attr(,"type")\
+[1] "logistic"\
+\
+$linear.output\
+[1] TRUE\
+\
+$data\
+        Pojemnosc     Waga_w_kg Utrzymywanie_temperatury_do_st_c            Cena\
+1  0.788519637462 0.36868686869                    0.06060606061 0.0433070866142\
+2  0.027190332326 0.49494949495                    0.59595959596 0.0866141732283\
+3  0.425981873112 0.03282828283                    0.93265993266 0.0748031496063\
+4  0.758308157100 0.36868686869                    0.08080808081 0.0551181102362\
+5  0.006042296073 1.00000000000                    0.52861952862 0.0551181102362\
+6  0.395770392749 0.43939393939                    1.00000000000 0.0003937007874\
+7  0.607250755287 0.29292929293                    0.02020202020 0.1338582677165\
+8  0.000000000000 0.19191919192                    0.42760942761 0.0393700787402\
+9  0.395770392749 0.22979797980                    0.73063973064 1.0000000000000\
+10 0.697885196375 0.44444444444                    0.09090909091 0.1023622047244\
+11 0.015105740181 0.11616161616                    0.42760942761 0.0433070866142\
+12 0.305135951662 0.00000000000                    0.59595959596 0.1299212598425\
+13 0.667673716012 0.44444444444                    0.06734006734 0.0118110236220\
+14 0.048338368580 0.97474747475                    0.59595959596 0.0826771653543\
+15 0.365558912387 0.12929292929                    0.05723905724 0.0629921259843\
+16 0.546827794562 0.39393939394                    0.00000000000 0.0944881889764\
+17 0.000000000000 0.46969696970                    0.56228956229 0.0161417322835\
+18 0.305135951662 0.01085858586                    1.00000000000 0.0433070866142\
+19 1.000000000000 0.39393939394                    0.02020202020 0.0000000000000\
+20 0.096676737160 0.44444444444                    0.42760942761 0.1023622047244\
+\
+$net.result\
+$net.result[[1]]\
+             [,1]\
+1  0.043240805242\
+2  0.055252179793\
+3  0.086915152707\
+4  0.049474622009\
+5  0.074165353561\
+6  0.002381177053\
+7  0.090128463242\
+8  0.028469406179\
+9  0.998885517658\
+10 0.063144904502\
+11 0.050838721018\
+12 0.118279183364\
+13 0.063602992845\
+14 0.053270450872\
+15 0.098999788076\
+16 0.092112397101\
+17 0.062984260379\
+18 0.037384968201\
+19 0.008686696647\
+20 0.099324740240\
+\
+\
+$weights\
+$weights[[1]]\
+$weights[[1]][[1]]\
+               [,1]          [,2]          [,3]         [,4]           [,5]\
+[1,]   0.9154268178  0.5157945058   5.341645711  1.609496835  0.15456208311\
+[2,]  -5.9014115011 -3.8170250897  -5.414349581 -4.356576930 -0.19563092068\
+[3,] -15.1554207626 19.5418025031  -5.394864832  1.636246728 -0.07494154266\
+[4,]   3.2501359690 -5.3397770914 -16.027326902  9.439322323 -1.58996063031\
+\
+$weights[[1]][[2]]\
+              [,1]           [,2]         [,3]           [,4]\
+[1,] -1.5006986437  0.08222541875 -2.228545237  0.05083142827\
+[2,] -5.2711442022  1.31335850970 13.690596192 -6.79409108822\
+[3,] -2.2704141478  2.71309821198 10.636788683 -4.86605092231\
+[4,] -9.3526687435 -4.91558420763 11.604510904 -9.47059949585\
+[5,]  0.6252260956 -1.70231899280 -2.023607561  1.14389250064\
+[6,]  1.5730404050 -6.45127635930 -9.645633127  3.61069586300\
+\
+$weights[[1]][[3]]\
+              [,1]          [,2]         [,3]\
+[1,] -0.7176526152 -0.0976352797 -2.323561958\
+[2,]  1.8415477807 -2.6935291051 -5.481857251\
+[3,] -1.2465480640  2.1354835907 -1.946919628\
+[4,] -0.4126456581  1.0249763726  9.032828024\
+[5,]  2.5029710149 -1.8558832474 -2.942665403\
+\
+$weights[[1]][[4]]\
+              [,1]\
+[1,]  0.4667004542\
+[2,]  1.1879735759\
+[3,] -0.4745853430\
+[4,] -0.3171779586\
+\
+\
+\
+$startweights\
+$startweights[[1]]\
+$startweights[[1]][[1]]\
+               [,1]          [,2]           [,3]          [,4]          [,5]\
+[1,]  0.30633885106  0.3328044679 -0.59268264892  1.0313704114 -0.2999390959\
+[2,] -0.26156900699 -0.7525483122 -0.01937219492 -2.1212417748  0.6353254817\
+[3,] -1.58271702685  1.0949252935  0.48202688694  0.9407025305  0.3314276028\
+[4,] -0.09994413985 -0.9487641850 -0.62543917767  0.2612040058  1.6096419699\
+\
+$startweights[[1]][[2]]\
+              [,1]           [,2]          [,3]          [,4]\
+[1,] -2.0134479081  0.05606686204 -1.8072469631 -0.6587515875\
+[2,]  0.4415269386  0.24530224595  2.2925316659 -0.6785477212\
+[3,] -0.1207875232  0.42153372713  1.7355832348  0.2001503134\
+[4,] -0.4598830289 -0.44731723131  2.0073909887 -0.7566749301\
+[5,]  0.3126300819 -0.43025688772 -0.1215894394  0.1188233573\
+[6,]  0.9994680663  0.33516382121  1.6751992106  0.3481562485\
+\
+$startweights[[1]][[3]]\
+              [,1]          [,2]          [,3]\
+[1,] -0.2648164257  0.2217720712 -0.7430621904\
+[2,] -0.3755624922 -0.7490615284 -1.1578962219\
+[3,] -0.7649643954  1.0399284919 -0.7480069591\
+[4,]  0.4161433698  0.8352922316  1.0616987913\
+[5,] -0.3441489078 -0.6469865636 -0.5992595440\
+\
+$startweights[[1]][[4]]\
+              [,1]\
+[1,] 0.94413415801\
+[2,] 1.54570568289\
+[3,] 0.01213233181\
+[4,] 0.26992789930\
+\
+\
+\
+$generalized.weights\
+$generalized.weights[[1]]\
+               [,1]             [,2]            [,3]\
+1    -4.60793694261    -1.7713280511   -0.8350623663\
+2     0.00256378910     1.1051402090   -5.5892402580\
+3     5.74664911694    14.6183542127   -4.7153636333\
+4    -3.67287013985    -0.7818147260    2.2400867334\
+5    -0.54179541960    -0.1995599823   -4.3974938104\
+6    78.92013194257  -367.4508087762   20.4158164052\
+7    -0.94564535089    -0.7824016679   -1.8794577185\
+8     6.32323405519    -0.7563637938  -13.5887576311\
+9  2854.20567768565 -6371.1021148519 1385.5040604362\
+10   -2.53404934577     1.2482099048    4.3238689427\
+11    3.09352430193    -8.8788295281   -5.2818088070\
+12    4.89890938157    10.7704005822   -3.4271546825\
+13   -2.58184536663     0.3322279991    1.2583633208\
+14   -0.69308915221    -0.2604126217   -5.6097488473\
+15   -0.02478746758    -0.1123985297   -0.0507978267\
+16   -0.76412216286    -0.5018705112   -1.4783625197\
+17    0.33224961796     1.7192948883   -5.0539251478\
+18    2.03680550485     5.4445971378   -3.9488683598\
+19  -15.06877651691   -12.3850451529  -16.5170436719\
+20    0.29512121841     0.8800594335   -2.3855963240\
+\
+\
+$result.matrix\
+                                                             1\
+error                                          0.0062274183190\
+reached.threshold                              0.0006376784405\
+steps                                        304.0000000000000\
+Intercept.to.1layhid1                          0.9154268178047\
+Pojemnosc.to.1layhid1                         -5.9014115010725\
+Waga_w_kg.to.1layhid1                        -15.1554207625621\
+Utrzymywanie_temperatury_do_st_c.to.1layhid1   3.2501359690378\
+Intercept.to.1layhid2                          0.5157945058416\
+Pojemnosc.to.1layhid2                         -3.8170250897060\
+Waga_w_kg.to.1layhid2                         19.5418025030715\
+Utrzymywanie_temperatury_do_st_c.to.1layhid2  -5.3397770914121\
+Intercept.to.1layhid3                          5.3416457108717\
+Pojemnosc.to.1layhid3                         -5.4143495808500\
+Waga_w_kg.to.1layhid3                         -5.3948648320273\
+Utrzymywanie_temperatury_do_st_c.to.1layhid3 -16.0273269021894\
+Intercept.to.1layhid4                          1.6094968348706\
+Pojemnosc.to.1layhid4                         -4.3565769295208\
+Waga_w_kg.to.1layhid4                          1.6362467277091\
+Utrzymywanie_temperatury_do_st_c.to.1layhid4   9.4393223234446\
+Intercept.to.1layhid5                          0.1545620831115\
+Pojemnosc.to.1layhid5                         -0.1956309206754\
+Waga_w_kg.to.1layhid5                         -0.0749415426616\
+Utrzymywanie_temperatury_do_st_c.to.1layhid5  -1.5899606303134\
+Intercept.to.2layhid1                         -1.5006986437261\
+1layhid.1.to.2layhid1                         -5.2711442022376\
+1layhid.2.to.2layhid1                         -2.2704141477864\
+1layhid.3.to.2layhid1                         -9.3526687435042\
+1layhid.4.to.2layhid1                          0.6252260955549\
+1layhid.5.to.2layhid1                          1.5730404050226\
+Intercept.to.2layhid2                          0.0822254187458\
+1layhid.1.to.2layhid2                          1.3133585097032\
+1layhid.2.to.2layhid2                          2.7130982119841\
+1layhid.3.to.2layhid2                         -4.9155842076318\
+1layhid.4.to.2layhid2                         -1.7023189927998\
+1layhid.5.to.2layhid2                         -6.4512763592958\
+Intercept.to.2layhid3                         -2.2285452369996\
+1layhid.1.to.2layhid3                         13.6905961924488\
+1layhid.2.to.2layhid3                         10.6367886833638\
+1layhid.3.to.2layhid3                         11.6045109042425\
+1layhid.4.to.2layhid3                         -2.0236075607710\
+1layhid.5.to.2layhid3                         -9.6456331271718\
+Intercept.to.2layhid4                          0.0508314282671\
+1layhid.1.to.2layhid4                         -6.7940910882172\
+1layhid.2.to.2layhid4                         -4.8660509223143\
+1layhid.3.to.2layhid4                         -9.4705994958518\
+1layhid.4.to.2layhid4                          1.1438925006362\
+1layhid.5.to.2layhid4                          3.6106958630028\
+Intercept.to.3layhid1                         -0.7176526151709\
+2layhid.1.to.3layhid1                          1.8415477806808\
+2layhid.2.to.3layhid1                         -1.2465480639507\
+2layhid.3.to.3layhid1                         -0.4126456580557\
+2layhid.4.to.3layhid1                          2.5029710149318\
+Intercept.to.3layhid2                         -0.0976352796954\
+2layhid.1.to.3layhid2                         -2.6935291051096\
+2layhid.2.to.3layhid2                          2.1354835907209\
+2layhid.3.to.3layhid2                          1.0249763725765\
+2layhid.4.to.3layhid2                         -1.8558832474483\
+Intercept.to.3layhid3                         -2.3235619578511\
+2layhid.1.to.3layhid3                         -5.4818572510568\
+2layhid.2.to.3layhid3                         -1.9469196281960\
+2layhid.3.to.3layhid3                          9.0328280238469\
+2layhid.4.to.3layhid3                         -2.9426654034171\
+Intercept.to.Cena                              0.4667004542005\
+3layhid.1.to.Cena                              1.1879735759055\
+3layhid.2.to.Cena                             -0.4745853430046\
+3layhid.3.to.Cena                             -0.3171779586377\
+\
+attr(,"class")\
+[1] "nn"\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf2 \strokec2 > \
+> #Plot the neural network\
+> plot(net.price)\
+> \
+> #Test the neural network on some training data\
+> testdata <- as.data.frame(matrix(c(262, 64, 28,\
++                                    206, 75, 16,\
++                                    361, 56, 20), nrow=3, ncol=3))\
+> scaled.testdata <- as.data.frame(scale(testdata[,], center=mins[1:3], scale=maxs[1:3]-mins[1:3]))\
+> net.results <- compute(net.price, scaled.testdata) #Run them through the neural network\
+> \
+> #Lets see what properties net.price has\
+> ls(net.results)\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf3 \strokec3 [1] "net.result" "neurons"   \
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf2 \strokec2 > \
+> #Lets see the results\
+> print(net.results$net.result)\
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf3 \strokec3               [,1]\
+[1,] -0.1306884980\
+[2,] -0.1160601384\
+[3,]  0.2358530937\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \trbrdrl\brdrnil \trbrdrr\brdrnil \trpadl120 \tapadb160 
+\clvertalt \clshdrawnil \clwWidth14140\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl320\partightenfactor0
+\cf3 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil \trpadl120 \tapadb160 
+\clvertalt \clshdrawnil \clwWidth14140\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+
+\itap2\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth14140\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720\sl320\partightenfactor0
+\cf3 \nestcell \lastrow\nestrow\cell \lastrow\row
+}
